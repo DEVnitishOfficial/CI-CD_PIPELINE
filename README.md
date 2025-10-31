@@ -1,9 +1,6 @@
-Perfect 👍 — you’ve written a great foundation for your CI/CD learning! I’ll now **restructure, polish, correct**, and **expand** your README to make it crystal clear, technically accurate, and beginner-friendly.
-I’ll also add missing key concepts (like build stages, rollback, CI/CD best practices, and real-world examples) — while keeping your original explanations intact.
 
----
 
-# 🚀 **CI/CD Pipeline – A Complete Beginner’s Guide**
+# **CI/CD Pipeline**
 
 Continuous Integration (CI) and Continuous Delivery/Deployment (CD) together form the backbone of **modern DevOps practices**.
 They automate testing, building, and deployment so that teams can **deliver software faster, safer, and more reliably**.
