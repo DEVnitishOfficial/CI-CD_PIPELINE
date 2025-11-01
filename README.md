@@ -225,3 +225,37 @@ jobs:
 Together, they form a **CI/CD pipeline**, which is the foundation of modern **DevOps automation** — enabling teams to build, test, and release high-quality software **at scale and speed**.
 
 ---
+
+
+# Github actions : 
+
+* it's a powerful automation tool integrated in github.com
+**Terminologies**
+1. workflow : automated process created using one or more jobs or we can say collections of jobs make workflow together, and to setup these work flow we use Yaml file configuration.
+2. jobs : it is a set of steps to be executed, it setup a pipeline that build and test a project. 
+3. steps : it's individual action like the shell command, but it's always a single task
+4. actions : it's a reusable or set of command that we can use inside a workflow to define a step. and these actions may the any linux command or any github custom command.
+
+
+- the repository that is going to be pushed on the github at first we have to crate a .github/worflow folder inside this there will be configuration file.
+
+* we can setup events like if any code pushed to the master branch then trigger the particular workflow.
+
+* And events can be the pull request, push and even the cronjobs we can do it here.
+
+* so in short actions make steps and multiple steps makes an job and collections of job make an workflows.
+
+
+
+**How to execute pipeline**
+
+1. first checkout/clone the repository in a machine, it can be you local or remote like aws machine etc.
+2. install node js, npm etc. on that machine.
+3. build the projects
+4. run the projects
+5. test the projects
+
+# setup first project
+
+* folder ---> Sample_Github_Action/.github/worflow/helloworld.yml
+* i want whenver any push happens to this main branch a partcular workflow must run.
