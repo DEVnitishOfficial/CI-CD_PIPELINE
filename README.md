@@ -548,3 +548,6 @@ jobs:
 if: github.event_name === 'push' # then run particlar job
 if: github.event_name == 'pull_request' # run the matching job
 ```
+
+# Triggring the workflow from the Github UI, for this there is event name [workflow_dispatch] if we integrate it we can trigger the workflow from the github ui easily
+
