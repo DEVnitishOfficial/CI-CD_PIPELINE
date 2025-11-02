@@ -11,12 +11,14 @@ on: # define on which events the workflow will run
 
 jobs:
     on-push: # job name
+        if: github.event_name == 'push'
         runs-on: ubuntu-latest
         steps: # steps are the commands that will be executed
             - name: "Running on master/test push" # name of the step
               run: echo "Running on master/test push" # command to be executed3
 
     on-pull-request: # job name
+        if: github.event_name == 'pull_request'
         runs-on: ubuntu-latest
         steps: # steps are the commands that will be executed
             - name: "Running on master pull request" # name of the step

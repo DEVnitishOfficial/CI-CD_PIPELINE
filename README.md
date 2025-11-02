@@ -514,3 +514,37 @@ This workflow:
 
 * events are occasions when we run our pipeline or the workflow, and these events can be pushing or pulling code, raising some request, creating some issues, creating fork etc.
 
+
+```yml
+name : "Multi event pipeline/workflows" # name of the workflow
+on: # define on which events the workflow will run
+    push: # event name
+        branches:
+            - master
+            - test
+    pull_request: # event name
+        branches:
+            - master
+
+
+jobs:
+    on-push: # job name
+        runs-on: ubuntu-latest
+        steps: # steps are the commands that will be executed
+            - name: "Running on master/test push" # name of the step
+              run: echo "Running on master/test push" # command to be executed3
+
+    on-pull-request: # job name
+        runs-on: ubuntu-latest
+        steps: # steps are the commands that will be executed
+            - name: "Running on master pull request" # name of the step
+              run: echo "Running on master pull request" # command to be executed
+```
+
+* In the above workflow/pipeline either happens push or pull in the both events the both jobs will run i.e the on-push job and the on-pull-request job.
+
+* To run a specific job we have to add conditon like
+```yml
+if: github.event_name === 'push' # then run particlar job
+if: github.event_name == 'pull_request' # run the matching job
+```
