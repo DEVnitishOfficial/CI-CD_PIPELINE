@@ -16,7 +16,7 @@ on: # define on which events the workflow will run
 
 jobs:
     on-push: # job name
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' 
         runs-on: ubuntu-latest
         steps: # steps are the commands that will be executed
             - name: "Running on master/test push" # name of the step
@@ -26,8 +26,15 @@ jobs:
         if: github.event_name == 'pull_request'
         runs-on: ubuntu-latest
         steps: # steps are the commands that will be executed
-            - name: "Running on master pull request" # name of the step
-              run: echo "Running on master pull request" # command to be executed
+            - name: "Running on master/main pull request" # name of the step
+              run: echo "Running on master/main pull request" # command to be executed
+
+    on-pull-request-opened: # job name
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Running on pull request opened" # name of the step
+              run: echo "Running on pull request opened" # command to be executed
 
     on-pull-request-closed: # job name
         if: github.event_name == 'pull_request' && github.event.action == 'closed'
