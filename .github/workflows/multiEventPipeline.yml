@@ -24,3 +24,10 @@ jobs:
         steps: # steps are the commands that will be executed
             - name: "Running on master pull request" # name of the step
               run: echo "Running on master pull request" # command to be executed
+
+    on-workflow-dispatch: # job name
+        if: github.event_name == 'workflow_dispatch'
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Running on workflow dispatch" # name of the step
+              run: echo "Running on workflow dispatch" # command to be executed
