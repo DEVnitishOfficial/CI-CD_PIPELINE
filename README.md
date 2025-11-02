@@ -509,3 +509,8 @@ This workflow:
 > all happening **automatically** on GitHub’s cloud servers.
 
 ---
+
+# Event that triggers workflow
+
+* events are occasions when we run our pipeline or the workflow, and these events can be pushing or pulling code, raising some request, creating some issues, creating fork etc.
+
