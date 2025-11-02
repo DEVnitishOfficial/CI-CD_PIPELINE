@@ -7,6 +7,10 @@ on: # define on which events the workflow will run
     pull_request: # event name
         branches:
             - master
+            - main
+        types:
+            - closed
+            - opened
     workflow_dispatch: # event name to trigger the workflow from the github ui
 
 
@@ -24,6 +28,13 @@ jobs:
         steps: # steps are the commands that will be executed
             - name: "Running on master pull request" # name of the step
               run: echo "Running on master pull request" # command to be executed
+
+    on-pull-request-closed: # job name
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Running on pull request closed" # name of the step
+              run: echo "Running on pull request closed" # command to be executed
 
     on-workflow-dispatch: # job name
         if: github.event_name == 'workflow_dispatch'
