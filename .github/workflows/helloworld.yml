@@ -5,11 +5,12 @@ on:
   push:
     branches:
       - master
+      - main
       - production
 
 jobs:
   hello_world:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: "Hello world"
         run: echo "Hello world" 

@@ -226,36 +226,328 @@ Together, they form a **CI/CD pipeline**, which is the foundation of modern **De
 
 ---
 
+# ⚙️ **GitHub Actions**
 
-# Github actions : 
+GitHub Actions is a **powerful automation tool built directly into GitHub**.
+It allows developers to **automate workflows** such as building, testing, and deploying projects right from their GitHub repositories.
 
-* it's a powerful automation tool integrated in github.com
-**Terminologies**
-1. workflow : automated process created using one or more jobs or we can say collections of jobs make workflow together, and to setup these work flow we use Yaml file configuration.
-2. jobs : it is a set of steps to be executed, it setup a pipeline that build and test a project. 
-3. steps : it's individual action like the shell command, but it's always a single task
-4. actions : it's a reusable or set of command that we can use inside a workflow to define a step. and these actions may the any linux command or any github custom command.
+You can think of it as a way to say:
+
+> “When something happens in my repository (like a code push), do these steps automatically.”
+
+---
+
+## 🧠 **Key Terminologies**
+
+Let’s break down the most important concepts you’ll use in GitHub Actions 👇
+
+### 1. **Workflow**
+
+* A **workflow** is an automated process defined inside your repository.
+* It’s made up of **one or more jobs**, and each job contains steps to execute.
+* Workflows are defined in a **YAML configuration file** inside the `.github/workflows` folder.
+* Example workflows:
+
+  * Run tests whenever code is pushed.
+  * Build and deploy app on every new release.
+
+> 📁 Example file path:
+> `.github/workflows/ci.yml`
+
+---
+
+### 2. **Job**
+
+* A **job** is a group of steps that run together on the **same virtual machine (runner)**.
+* Each job runs in a clean environment (like a fresh Ubuntu or Windows VM).
+* By default, jobs run **sequentially**, but you can configure them to run in **parallel**.
+
+> 🧩 Example:
+> One job might build your app, another might run tests, and a third could deploy it.
+
+---
+
+### 3. **Step**
+
+* A **step** is an individual task that runs inside a job.
+* Steps can either:
+
+  * Run **commands** (like `npm install` or `echo "Hello"`)
+  * Or **use actions** (reusable commands provided by GitHub or the community).
+
+> 💡 Example step:
+>
+> ```yaml
+> - name: Run tests
+>   run: npm test
+> ```
+
+---
+
+### 4. **Action**
+
+* An **action** is a **reusable unit of code** that performs a specific task in your workflow.
+* You can use:
+
+  * **Pre-built actions** from the GitHub Marketplace (like `actions/checkout`).
+  * Or create your **own custom actions**.
+
+> 🧠 Think of actions like “functions” in a workflow.
+> You can call them inside steps to save time and avoid repeating the same logic.
+
+> 💡 Example action:
+>
+> ```yaml
+> - name: Checkout code
+>   uses: actions/checkout@v4
+> ```
+
+---
+
+## 🔄 **How Workflows Are Structured**
+
+Here’s how everything fits together:
+
+```
+Action → Step → Job → Workflow
+```
+
+Or in words:
+
+> **Actions** are combined into **Steps**,
+> **Steps** form **Jobs**,
+> **Jobs** together make a **Workflow**.
+
+---
+
+## 🏗️ **Workflow Folder Structure**
+
+GitHub automatically looks for workflows in a specific folder path.
+
+✅ **Correct folder structure:**
+
+```
+ci-cd_pipeline/
+├── .github/
+│   └── workflows/
+│       └── helloworld.yml
+```
+
+🚫 **Wrong folder structure:**
+
+```
+ci-cd_pipeline/github-action-workflow/.github/workflows/helloworld.yml
+```
+
+> ❗ If your `.yml` file is not in `.github/workflows`, GitHub Actions won’t detect or trigger it.
+
+---
+
+## ⚙️ **How GitHub Actions Works**
+
+A typical GitHub Actions workflow goes through these stages:
+
+1. **Trigger Event** – Something happens in your repo (e.g., `push`, `pull_request`, or a scheduled `cron` job).
+2. **Runner Setup** – GitHub starts a fresh virtual machine (like `ubuntu-latest` or `windows-latest`).
+3. **Checkout Code** – The workflow clones your repository using the `actions/checkout` action.
+4. **Install Dependencies** – Tools like Node.js, Python, Java, etc., are installed.
+5. **Build Project** – Your source code is compiled or built.
+6. **Run Tests** – Unit tests, integration tests, or any other validation runs.
+7. **Deploy** (optional) – The app can be deployed to production, AWS, or other environments.
+
+---
+
+## 🧪 **Example: Hello World Workflow**
+
+Here’s a simple example to start your first workflow.
+
+**Folder Structure:**
+
+```
+Sample_Github_Action/
+└── .github/
+    └── workflows/
+        └── helloworld.yml
+```
+
+**`helloworld.yml` content:**
+
+```yaml
+name: Hello World Workflow
+
+# 1️⃣ Trigger workflow on any push to the main branch
+on:
+  push:
+    branches: [ "main" ]
+
+# 2️⃣ Define the job
+jobs:
+  hello_world:
+    runs-on: ubuntu-latest   # or windows-latest / macos-latest
+
+    steps:
+      # Step 1: Checkout repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Print a message
+      - name: Print Hello World
+        run: echo "Hello, GitHub Actions!"
+```
+
+### 🔍 **Explanation:**
+
+* The workflow runs **every time** code is pushed to the `main` branch.
+* It uses an **Ubuntu virtual machine** (`ubuntu-latest`).
+* The job has two steps:
+
+  1. **Checkout code** – pulls your repository files into the runner.
+  2. **Print message** – runs a shell command to print text in the logs.
+
+---
+
+## ⚡ **Triggering Workflows (Events)**
+
+Workflows are triggered by **events** in your repository.
+Some common ones are:
+
+| Event               | Description                                   |
+| ------------------- | --------------------------------------------- |
+| `push`              | Trigger when code is pushed to a branch.      |
+| `pull_request`      | Trigger when a PR is opened or updated.       |
+| `schedule`          | Run workflow on a schedule using cron syntax. |
+| `workflow_dispatch` | Trigger manually from the GitHub UI.          |
+
+> 💡 Example: Run a workflow every day at midnight
+>
+> ```yaml
+> on:
+>   schedule:
+>     - cron: "0 0 * * *"
+> ```
+
+---
+
+## 🖥️ **Choosing Runners (Operating Systems)**
+
+You can run your workflow on different operating systems using the `runs-on` key.
+
+| Platform | Example                   |
+| -------- | ------------------------- |
+| Ubuntu   | `runs-on: ubuntu-latest`  |
+| Windows  | `runs-on: windows-latest` |
+| macOS    | `runs-on: macos-latest`   |
+
+> 🧠 These environments are **GitHub-hosted virtual machines**, meaning your code runs in GitHub’s secure infrastructure — not your local system.
+
+---
+
+## 🐞 **Common Mistakes (and Fixes)**
+
+| Problem                        | Fix                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------- |
+| Workflow not triggering        | Make sure `.yml` file is under `.github/workflows/`.                            |
+| Wrong indentation              | YAML is space-sensitive! Use **2 spaces** instead of tabs.                      |
+| Invalid event syntax           | Check that your event name (e.g., `push`, `pull_request`) is spelled correctly. |
+| Workflow doesn’t run on branch | Verify branch name matches (`main`, `master`, etc.)                             |
+
+---
+
+## 🧰 **Real-World Example – Node.js CI Pipeline**
+
+```yaml
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+```
+
+This workflow:
+
+* Runs on **push or pull request** to the `main` branch.
+* Uses Node.js 18.
+* Installs dependencies and runs tests automatically.
+
+---
+
+## 🏁 **Summary**
+
+| Concept      | Description                                             |
+| ------------ | ------------------------------------------------------- |
+| **Workflow** | A complete automation defined in YAML.                  |
+| **Job**      | A collection of steps that run on a single runner.      |
+| **Step**     | A single command or action in a job.                    |
+| **Action**   | A reusable piece of code that performs a specific task. |
+| **Runner**   | The virtual environment where jobs execute.             |
+
+### In simple terms:
+
+> GitHub Actions automates your development workflow —
+> from **code push → test → build → deploy** —
+> all happening **automatically** on GitHub’s cloud servers.
+
+---
+
+# Event that triggers workflow
+
+* events are occasions when we run our pipeline or the workflow, and these events can be pushing or pulling code, raising some request, creating some issues, creating fork etc.
 
 
-- the repository that is going to be pushed on the github at first we have to crate a .github/worflow folder inside this there will be configuration file.
+```yml
+name : "Multi event pipeline/workflows" # name of the workflow
+on: # define on which events the workflow will run
+    push: # event name
+        branches:
+            - master
+            - test
+    pull_request: # event name
+        branches:
+            - master
 
-* we can setup events like if any code pushed to the master branch then trigger the particular workflow.
 
-* And events can be the pull request, push and even the cronjobs we can do it here.
+jobs:
+    on-push: # job name
+        runs-on: ubuntu-latest
+        steps: # steps are the commands that will be executed
+            - name: "Running on master/test push" # name of the step
+              run: echo "Running on master/test push" # command to be executed3
 
-* so in short actions make steps and multiple steps makes an job and collections of job make an workflows.
+    on-pull-request: # job name
+        runs-on: ubuntu-latest
+        steps: # steps are the commands that will be executed
+            - name: "Running on master pull request" # name of the step
+              run: echo "Running on master pull request" # command to be executed
+```
 
+* In the above workflow/pipeline either happens push or pull in the both events the both jobs will run i.e the on-push job and the on-pull-request job.
 
+* To run a specific job we have to add conditon like
+```yml
+if: github.event_name === 'push' # then run particlar job
+if: github.event_name == 'pull_request' # run the matching job
+```
 
-**How to execute pipeline**
+# Triggring the workflow from the Github UI, for this there is event name [workflow_dispatch] if we integrate it we can trigger the workflow from the github ui easily
 
-1. first checkout/clone the repository in a machine, it can be you local or remote like aws machine etc.
-2. install node js, npm etc. on that machine.
-3. build the projects
-4. run the projects
-5. test the projects
-
-# setup first project
-
-* folder ---> Sample_Github_Action/.github/worflow/helloworld.yml
-* i want whenver any push happens to this main branch a partcular workflow must run.
