@@ -510,44 +510,223 @@ This workflow:
 
 ---
 
-# Event that triggers workflow
+Excellent — you’re doing a great job building this step-by-step! 🙌
+Your explanation of GitHub Actions events is good, but we’ll now make it **clearer, properly formatted, corrected, and more complete**.
+I’ll fix syntax issues, expand on event types, and show practical examples so that **any beginner** can easily follow and understand it.
 
-* events are occasions when we run our pipeline or the workflow, and these events can be pushing or pulling code, raising some request, creating some issues, creating fork etc.
+---
+
+# ⚡ **Events That Trigger GitHub Workflows**
 
 
-```yml
-name : "Multi event pipeline/workflows" # name of the workflow
-on: # define on which events the workflow will run
-    push: # event name
-        branches:
-            - master
-            - test
-    pull_request: # event name
-        branches:
-            - master
+## 🧠 **What Are Events in GitHub Actions?**
 
+An **event** is something that happens in a repository that can **start (trigger)** your workflow automatically.
+These can include:
+
+* 🟢 **Code-based events**
+
+  * `push` → when someone pushes code to a branch.
+  * `pull_request` → when a pull request is opened, synchronized, or merged.
+  * `create` → when a branch or tag is created.
+  * `delete` → when a branch or tag is deleted.
+
+* 🟣 **Project management events**
+
+  * `issues` → when an issue is opened, edited, labeled, or closed.
+  * `fork` → when someone forks your repository.
+  * `release` → when a new release is published.
+
+* 🟠 **Manual and scheduled events**
+
+  * `workflow_dispatch` → run workflow manually from the GitHub UI.
+  * `schedule` → run automatically at a specific time (using **cron syntax**).
+
+---
+
+## ⚙️ **Example: Multi-Event Workflow**
+
+Here’s an example of a GitHub Actions workflow triggered by **multiple events** (`push` and `pull_request`):
+
+```yaml
+name: "Multi-Event Pipeline"
+
+# 🧩 Define events that trigger this workflow
+on:
+  push:                # Trigger when code is pushed
+    branches:
+      - master         # Only run for master branch
+      - test           # Also run for test branch
+
+  pull_request:        # Trigger when a PR targets master branch
+    branches:
+      - master
+
+# 💼 Define jobs (what tasks to perform)
+jobs:
+  on-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Running on master/test push"
+        run: echo "Code pushed to master/test branch"
+
+  on-pull-request:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Running on master pull request"
+        run: echo "Pull request created or updated for master"
+```
+
+---
+
+## 🔍 **Explanation**
+
+* The **`on:`** keyword defines which events will trigger the workflow.
+* In this example:
+
+  * When a **push** happens on the `master` or `test` branch → the workflow starts.
+  * When a **pull request** targets the `master` branch → the workflow also starts.
+* Both jobs (`on-push` and `on-pull-request`) are defined separately.
+* Each job will run **independently** based on the event type.
+
+---
+
+## 🎯 **Running Specific Jobs Conditionally**
+
+If you want to run **only certain jobs** based on which event triggered the workflow,
+you can use the **`if:`** conditional expression.
+
+```yaml
+jobs:
+  conditional-job:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - name: "This runs only on push"
+        run: echo "Triggered by a push event"
+
+  pr-job:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: "This runs only on pull request"
+        run: echo "Triggered by a pull request event"
+```
+
+> 💡 **Note:** Use a **single equals sign (`==`)** in YAML expressions, not triple (`===`) like in JavaScript.
+
+### ✅ **Useful Conditional Contexts**
+
+GitHub provides several built-in context variables you can use:
+
+| Context             | Description                                                                      |
+| ------------------- | -------------------------------------------------------------------------------- |
+| `github.event_name` | The name of the event that triggered the workflow (`push`, `pull_request`, etc.) |
+| `github.ref`        | The branch or tag that triggered the workflow                                    |
+| `github.actor`      | The username who triggered the event                                             |
+| `github.repository` | The full repo name (`user/repo`)                                                 |
+
+> Example:
+>
+> ```yaml
+> if: github.ref == 'refs/heads/master'
+> ```
+
+---
+
+## 🧭 **Triggering Workflows Manually**
+
+Sometimes, you may want to **run a workflow manually** — for example, to rebuild or redeploy your app.
+For this, GitHub provides the **`workflow_dispatch`** event.
+
+### 🧩 Example:
+
+```yaml
+name: "Manual Trigger Example"
+
+on:
+  workflow_dispatch:    # allows manual run from GitHub UI
 
 jobs:
-    on-push: # job name
-        runs-on: ubuntu-latest
-        steps: # steps are the commands that will be executed
-            - name: "Running on master/test push" # name of the step
-              run: echo "Running on master/test push" # command to be executed3
-
-    on-pull-request: # job name
-        runs-on: ubuntu-latest
-        steps: # steps are the commands that will be executed
-            - name: "Running on master pull request" # name of the step
-              run: echo "Running on master pull request" # command to be executed
+  manual-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Manual trigger example"
+        run: echo "This workflow was triggered manually!"
 ```
 
-* In the above workflow/pipeline either happens push or pull in the both events the both jobs will run i.e the on-push job and the on-pull-request job.
+Once you add `workflow_dispatch`:
 
-* To run a specific job we have to add conditon like
-```yml
-if: github.event_name === 'push' # then run particlar job
-if: github.event_name == 'pull_request' # run the matching job
+* Go to your repository → **Actions** tab → select the workflow → click **“Run workflow”**.
+* You can even define **input fields** to pass custom data.
+
+### ✨ Example with Inputs:
+
+```yaml
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Select environment to deploy'
+        required: true
+        default: 'staging'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Deploy to environment"
+        run: echo "Deploying to ${{ github.event.inputs.environment }}"
 ```
 
-# Triggring the workflow from the Github UI, for this there is event name [workflow_dispatch] if we integrate it we can trigger the workflow from the github ui easily.
+Now when you click **“Run workflow”**, you’ll see a dropdown asking for the environment name (e.g., `staging` or `production`).
+
+---
+
+## 🕒 **Triggering Workflows on Schedule**
+
+You can also trigger workflows **automatically at specific times** using the **`schedule`** event and **cron syntax**.
+
+### Example:
+
+```yaml
+on:
+  schedule:
+    - cron: "0 0 * * *"   # Runs every day at midnight (UTC)
+
+jobs:
+  nightly-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Nightly build"
+        run: echo "Running scheduled nightly build"
+```
+
+> 🧠 **Cron format:** `"minute hour day month day-of-week"`
+> Example:
+>
+> * `"0 0 * * *"` → Every day at midnight
+> * `"*/30 * * * *"` → Every 30 minutes
+> * `"0 9 * * 1"` → Every Monday at 9 AM
+
+---
+
+## 🧩 **Common Events Cheat Sheet**
+
+| Event               | Description                                | Typical Use Case               |
+| ------------------- | ------------------------------------------ | ------------------------------ |
+| `push`              | When new code is pushed to a branch        | Run tests or build app         |
+| `pull_request`      | When a PR is opened/updated/merged         | Run CI checks before merge     |
+| `workflow_dispatch` | Manual trigger from GitHub UI              | Manually deploy app            |
+| `schedule`          | Runs automatically at a specific time      | Nightly builds, backups        |
+| `release`           | When a new GitHub release is created       | Deploy a production version    |
+| `issues`            | When an issue is opened, edited, or closed | Send Slack/Email notifications |
+| `fork`              | When someone forks the repo                | Analytics or security alerts   |
+
+---
+
+
+##
+
+
 

@@ -4,6 +4,8 @@ on: # define on which events the workflow will run
         branches:
             - master
             - test
+    schedule: # event name
+        - cron: '0 10 * * 2,4' # run the workflow every day at 10:00 AM on Tuesday and Thursday
     pull_request: # event name
         branches:
             - master
@@ -49,3 +51,10 @@ jobs:
         steps:
             - name: "Running on workflow dispatch" # name of the step
               run: echo "Running on workflow dispatch" # command to be executed
+
+    on-schedule: # job name
+        if: github.event_name == 'schedule'
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Running on schedule" # name of the step
+              run: echo "Running on schedule" # command to be executed
